@@ -23,22 +23,22 @@ class DiceCard(pygame.sprite.Sprite):
         surface.blit(self.image, self.rect)
 
 
-class OneDiceCard(DiceCard):
-    def __init__(self, image, cx, cy, fighter):
-        super().__init__(image, cx, cy, fighter)
-
-
-class Attack(DiceCard):
-    def __init__(self, image, cx, cy, fighter):
-        super().__init__(image, cx, cy, fighter)
-
-    def action(self, target, damage):
-        super().action(target, damage, 0, 0)
-
-
-class CountingDiceCard(DiceCard):
-    def __init__(self, image, cx, cy, fighter, count):
-        super().__init__(image, cx, cy, fighter)
-        self.starting_count = count
-        self.count = self.starting_count
+# class OneDiceCard(DiceCard):
+#     def __init__(self, image, cx, cy, fighter):
+#         super().__init__(image, cx, cy, fighter)
+#
+#
+# class Attack(DiceCard):
+#     def __init__(self, image, cx, cy, fighter):
+#         super().__init__(image, cx, cy, fighter)
+#
+#     def action(self, target, damage):
+#         super().action(target, damage, 0, 0)
+#
+#
+# class CountingDiceCard(DiceCard):
+#     def __init__(self, image, cx, cy, fighter, count):
+#         super().__init__(image, cx, cy, fighter)
+#         self.starting_count = count
+#         self.count = self.starting_count
 

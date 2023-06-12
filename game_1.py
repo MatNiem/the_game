@@ -31,7 +31,8 @@ for file_name in file_names:
 set_of_dices = pygame.sprite.Group()
 set_of_cards = pygame.sprite.Group()
 
-DICES = [IMAGES["DICE1"], IMAGES["DICE2"], IMAGES["DICE3"], IMAGES["DICE4"], IMAGES["DICE5"], IMAGES["DICE6"], ]
+DICES = [IMAGES["DICE1"], IMAGES["DICE2"], IMAGES["DICE3"],
+         IMAGES["DICE4"], IMAGES["DICE5"], IMAGES["DICE6"], ]
 
 
 enemy1 = objects.Fighter("E1", [IMAGES["ENEMY1"], IMAGES["ENEMY2"]], 1280 - 80, 100)
@@ -90,6 +91,7 @@ while running:
             dice.kill()
         for card in current_level.set_of_cards:
             card.image = card.images[0]
+            # card.kill()
         current_level.player.dices = current_level.player.max_dices
         dice_spawn_x = 300
 
