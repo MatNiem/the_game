@@ -67,8 +67,9 @@ class Text:
 
 
 class Fighter(pygame.sprite.Sprite):
-    def __init__(self, images, cx, cy, cards=None, life=10, dices=3):
+    def __init__(self, name, images, cx, cy, cards=None, life=10, dices=3):
         super().__init__()
+        self.name = name
         self.images = images
         self.image = self.images[0]
         self._count = 0
@@ -80,7 +81,8 @@ class Fighter(pygame.sprite.Sprite):
         self.life_display = Text(life, 'red', cx, cy + 80)
         self.poison = 0
         self.level = None
-        self.dices = dices
+        self.max_dices = dices
+        self.dices = self.max_dices
         if not cards:
             self.cards = cards
 

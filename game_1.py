@@ -1,6 +1,9 @@
-import pygame, os, objects, random
+import objects
+import os
+import pygame
+import random
 
-#import Levels
+import Levels
 import cards
 
 pygame.init()
@@ -14,62 +17,6 @@ screen = pygame.display.set_mode([WIDTH, HEIGHT])
 CLICKED_DICES = 0
 
 running = True
-
-
-class Level:
-    def __init__(self, player, enemy, background):
-        self.player = player
-        self.enemy = enemy
-        self.background = background
-        self.set_of_dices = pygame.sprite.Group()
-        self.set_of_cards = pygame.sprite.Group()
-
-    def update(self):
-        self.set_of_dices.update()
-        self.set_of_cards.update()
-
-        for d in self.set_of_dices:
-            for c in self.set_of_cards:
-                if d.rect.colliderect(c.rect) and not d.clicked and c.image == c.images[0]:
-                    c.action(self.enemy, d.value + 1, 0, 0)
-                    d.kill()
-                    c.image = c.images[1]
-
-    def draw(self, surface):
-        surface.blit(self.background, (0, 0))
-
-        self.enemy.draw(surface)
-        self.player.draw(surface)
-
-        self.set_of_cards.draw(surface)
-        self.set_of_dices.draw(surface)
-
-
-class Menu:
-    def __init__(self, background, images):
-        self.background = background
-        self.start_button = objects.Button([images["BUTTON1"], images["BUTTON2"]], 640, 200, "Start")
-        self.quit_button = objects.Button([images["BUTTON1"], images["BUTTON2"]], 640, 400, "Quit")
-
-    def update(self):
-        self.start_button.update()
-        self.quit_button.update()
-        if self.start_button.activated:
-            global current_level
-            current_level = l1
-            self.start_button.activated = False
-        if self.quit_button.activated:
-            global running
-            running = False
-            self.quit_button.activated = False
-
-    def draw(self, surface):
-        surface.blit(self.background, (0, 0))
-        self.start_button.draw(surface)
-        self.quit_button.draw(surface)
-
-
-
 
 
 path = 'images'
@@ -87,20 +34,31 @@ set_of_cards = pygame.sprite.Group()
 DICES = [IMAGES["DICE1"], IMAGES["DICE2"], IMAGES["DICE3"], IMAGES["DICE4"], IMAGES["DICE5"], IMAGES["DICE6"], ]
 
 
-enemy = objects.Fighter([IMAGES["ENEMY1"], IMAGES["ENEMY2"]], WIDTH - 80, 100)
-player = objects.Fighter([IMAGES["PLAYER1"], IMAGES["PLAYER2"]], 80, HEIGHT - 100)
+enemy1 = objects.Fighter("E1", [IMAGES["ENEMY1"], IMAGES["ENEMY2"]], 1280 - 80, 100)
+enemy2 = objects.Fighter("E2", [IMAGES["ENEMY1"], IMAGES["ENEMY2"]], 1280 - 80, 100)
+enemy3 = objects.Fighter("E3", [IMAGES["ENEMY1"], IMAGES["ENEMY2"]], 1280 - 80, 100)
 
-l1 = Level(player, enemy, BACKGROUND)
-menu = Menu(BACKGROUND, IMAGES)
+player = objects.Fighter("Player", [IMAGES["PLAYER1"], IMAGES["PLAYER2"]], 80, 720 - 100)
+
+# Menu start:
+m_start = Levels.Menu(BACKGROUND, IMAGES, "Start")
+# Menu pause:
+m_pause = Levels.Menu(BACKGROUND, IMAGES, "Continue")
+# Poziom pierwszy:
+l_one = Levels.Level(player, enemy1, BACKGROUND, IMAGES)
+# Poziom drugi:
+l_two = Levels.Level(player, enemy2, BACKGROUND, IMAGES)
+# Poziom trzeci:
+l_three = Levels.Level(player, enemy3, BACKGROUND, IMAGES)
 
 
 dice_spawn_x = 300
 dice_spawn_y = HEIGHT + 70
 
 
-current_level = l1
+current_level = l_one
 player.level = current_level
-enemy.level = current_level
+enemy1.level = current_level
 
 attack_card = cards.DiceCard([IMAGES["KARTA1"], IMAGES["KARTA1GRAY"]], 250, 300, player)
 current_level.set_of_cards.add(attack_card)
@@ -112,19 +70,29 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                current_level = menu
+                current_level = m_pause
             elif event.key == pygame.K_SPACE:
                 if player.dices > 0:
                     d = objects.Dice(DICES, dice_spawn_x, dice_spawn_y, random.randint(0, 5))
                     current_level.set_of_dices.add(d)
                     dice_spawn_x += 100
                     player.dices -= 1
-            elif event.key == pygame.K_DOWN:
-                enemy.life -= 1
 
     key_pressed = pygame.event.get()
 
-    current_level.update()
+    option = current_level.update()
+    if option == 'b1':
+        current_level = l_one
+    elif option == 'bq':
+        running = False
+    elif option == 'nt':
+        for dice in current_level.set_of_dices:
+            dice.kill()
+        for card in current_level.set_of_cards:
+            card.image = card.images[0]
+        current_level.player.dices = current_level.player.max_dices
+        dice_spawn_x = 300
+
     current_level.draw(screen)
 
     pygame.display.flip()
