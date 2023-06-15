@@ -18,25 +18,26 @@ class Level:
         self.set_of_cards.update()
         self.next_level_button.update()
 
-        for d in self.set_of_dices:
-            for c in self.set_of_cards:
-                if d.rect.colliderect(c.rect) and not d.clicked and c.image == c.images[0]:
-                    c.action(self.enemy, d.value + 1, 0, 0)
-                    d.kill()
-                    c.image = c.images[1]
+        # for d in self.set_of_dices:
+        #     for c in self.set_of_cards:
+        #         if d.rect.colliderect(c.rect) and not d.clicked and c.image == c.images[0]:
+        #             c.action(self.enemy, d.value + 1, 0, 0)
+        #             d.kill()
+        #             c.image = c.images[1]
 
         if self.next_level_button.activated:
             self.next_level_button.activated = False
             return 'nt'
 
-    def draw(self, surface):
+    def draw(self, surface, enemy_attacking, player_attacking, is_player_turn):
         surface.blit(self.background, (0, 0))
         self.next_level_button.draw(surface)
 
-        self.enemy.draw(surface)
-        self.player.draw(surface)
+        self.enemy.draw(surface, enemy_attacking)
+        self.player.draw(surface, player_attacking)
 
-        self.set_of_cards.draw(surface)
+        if is_player_turn:
+            self.set_of_cards.draw(surface)
         self.set_of_dices.draw(surface)
 
 
@@ -45,6 +46,8 @@ class Menu:
         self.background = background
         self.start_button = objects.Button([images["BUTTON1"], images["BUTTON2"]], 640, 200, first_button_text)
         self.quit_button = objects.Button([images["BUTTON1"], images["BUTTON2"]], 640, 400, "Quit")
+        self.set_of_cards = pygame.sprite.Group()
+        self.set_of_dices = pygame.sprite.Group()
 
     def update(self):
         self.start_button.update()
@@ -56,7 +59,7 @@ class Menu:
             self.quit_button.activated = False
             return 'bq'
 
-    def draw(self, surface):
+    def draw(self, surface, a, b, c):
         surface.blit(self.background, (0, 0))
         self.start_button.draw(surface)
         self.quit_button.draw(surface)

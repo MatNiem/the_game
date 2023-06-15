@@ -67,7 +67,7 @@ class Text:
 
 
 class Fighter(pygame.sprite.Sprite):
-    def __init__(self, name, images, cx, cy, cards=None, life=10, dices=3):
+    def __init__(self, name, images, cx, cy, life=10, dices=3):
         super().__init__()
         self.name = name
         self.images = images
@@ -83,12 +83,14 @@ class Fighter(pygame.sprite.Sprite):
         self.level = None
         self.max_dices = dices
         self.dices = self.max_dices
-        if not cards:
-            self.cards = cards
+        self.set_of_cards = pygame.sprite.Group()
 
-    def draw(self, surface):
+    def draw(self, surface, is_attacking):
         surface.blit(self.image, self.rect)
-        self._move(self.images)
+        if is_attacking:
+            self._attack(self.image)
+        else:
+            self._move(self.images)
         self.life_display.text = str(self.life)
         self.life_display.draw(surface)
 
@@ -98,6 +100,11 @@ class Fighter(pygame.sprite.Sprite):
         self.rect.center = self.cx, self.cy
         self._count = (self._count + 1) % 40
 
+    def _attack(self, image_list):
+        self.image = image_list[self._count // 20]
+        self.rect = self.image.get_rect()
+        self.rect.center = self.cx, self.cy
+        self._count = (self._count + 1) % 40
 
 class Button(pygame.sprite.Sprite):
     def __init__(self, images, cx, cy, text):

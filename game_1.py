@@ -1,3 +1,5 @@
+import time
+
 import objects
 import os
 import pygame
@@ -13,10 +15,14 @@ HEIGHT = 720
 fps = 60
 timer = pygame.time.Clock()
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
+action_cooldown = 0
 
 CLICKED_DICES = 0
 
 running = True
+
+
+
 
 
 path = 'images'
@@ -34,8 +40,7 @@ set_of_cards = pygame.sprite.Group()
 DICES = [IMAGES["DICE1"], IMAGES["DICE2"], IMAGES["DICE3"],
          IMAGES["DICE4"], IMAGES["DICE5"], IMAGES["DICE6"], ]
 
-
-enemy1 = objects.Fighter("E1", [IMAGES["ENEMY1"], IMAGES["ENEMY2"]], 1280 - 80, 100)
+enemy1 = objects.Fighter("E1", [IMAGES["ENEMY1"], IMAGES["ENEMY2"]], 1280 - 80, 100, dices=1)
 enemy2 = objects.Fighter("E2", [IMAGES["ENEMY1"], IMAGES["ENEMY2"]], 1280 - 80, 100)
 enemy3 = objects.Fighter("E3", [IMAGES["ENEMY1"], IMAGES["ENEMY2"]], 1280 - 80, 100)
 
@@ -52,18 +57,31 @@ l_two = Levels.Level(player, enemy2, BACKGROUND, IMAGES)
 # Poziom trzeci:
 l_three = Levels.Level(player, enemy3, BACKGROUND, IMAGES)
 
-
 dice_spawn_x = 300
 dice_spawn_y = HEIGHT + 70
 
-
-current_level = l_one
+current_level = m_start
 player.level = current_level
 enemy1.level = current_level
 
 attack_card = cards.DiceCard([IMAGES["KARTA1"], IMAGES["KARTA1GRAY"]], 250, 300, player)
-current_level.set_of_cards.add(attack_card)
-attack_card.level = current_level
+l_one.set_of_cards.add(attack_card)
+attack_card.level = l_one
+
+is_player_turn = True
+bot_turn_passed = False
+dices_spawned = False
+damage_dealing = False
+enemy_attacking = False
+player_attacking = False
+
+def spawn_dices(unit):
+    global dice_spawn_x, DICES, dice_spawn_y, current_level
+    for i in range(unit.max_dices):
+        d = objects.Dice(DICES, dice_spawn_x, dice_spawn_y, random.randint(0, 5))
+        current_level.set_of_dices.add(d)
+        dice_spawn_x += 100
+        unit.dices -= 1
 
 while running:
     for event in pygame.event.get():
@@ -73,17 +91,51 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 current_level = m_pause
             elif event.key == pygame.K_SPACE:
-                if player.dices > 0:
-                    d = objects.Dice(DICES, dice_spawn_x, dice_spawn_y, random.randint(0, 5))
-                    current_level.set_of_dices.add(d)
-                    dice_spawn_x += 100
-                    player.dices -= 1
+                spawn_dices(player)
 
     key_pressed = pygame.event.get()
+
+    current_level.draw(screen, enemy_attacking,  player_attacking, is_player_turn)
+
+    if not (current_level == m_pause and current_level == m_pause):
+
+        if not is_player_turn:
+            action_cooldown += 1
+            if action_cooldown >= 90:
+                if not dices_spawned:
+                    spawn_dices(current_level.enemy)
+                    dices_spawned = True
+                    action_cooldown = 0
+                else:
+                    for d in current_level.set_of_dices:
+                        player.life -= d.value
+                        d.kill()
+                        action_cooldown = 0
+                        is_player_turn = True
+                        enemy_attacking = True
+                    dices_spawned = False
+                    enemy_attacking = False
+
+        if is_player_turn:
+            action_cooldown += 1
+            #if action_cooldown >= 90:
+            if not dices_spawned:
+                spawn_dices(current_level.player)
+                dices_spawned = True
+                action_cooldown = 0
+            for d in current_level.set_of_dices:
+                for c in current_level.set_of_cards:
+                    if d.rect.colliderect(c.rect) and not d.clicked and c.image == c.images[0]:
+                        c.action(current_level.enemy, d.value + 1, 0, 0)
+                        player_attacking = True
+                        d.kill()
+                        c.image = c.images[1]
+                        player_attacking = False
 
     option = current_level.update()
     if option == 'b1':
         current_level = l_one
+        spawn_dices(player)
     elif option == 'bq':
         running = False
     elif option == 'nt':
@@ -94,10 +146,12 @@ while running:
             # card.kill()
         current_level.player.dices = current_level.player.max_dices
         dice_spawn_x = 300
+        is_player_turn = False
 
-    current_level.draw(screen)
+
 
     pygame.display.flip()
     timer.tick(fps)
+
 
 pygame.quit()
