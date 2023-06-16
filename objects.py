@@ -3,6 +3,9 @@ import pygame
 CLICKED_DICE = 0
 ID = 0
 
+red = (255, 0, 0)
+green = (0, 255, 0)
+
 
 class Dice(pygame.sprite.Sprite):
     def __init__(self, images, cx, cy, value):
@@ -66,19 +69,36 @@ class Text:
         surface.blit(self.image, self.rect)
 
 
+class HealthBar:
+    def __init__(self, x, y, hp, max_hp):
+        self.x = x
+        self.y = y
+        self.hp = hp
+        self.max_hp = max_hp
+
+    def draw(self, surface, hp):
+        self.hp = hp
+        ratio = self.hp / self.max_hp
+        pygame.draw.rect(surface, red, (self.x - 75, self.y, 150, 20))
+        pygame.draw.rect(surface, green, (self.x - 75, self.y, 150 * ratio, 20))
+
+
 class Fighter(pygame.sprite.Sprite):
-    def __init__(self, name, images, cx, cy, life=10, dices=3):
+    def __init__(self, name, images, images_a, cx, cy, life=12, dices=3):
         super().__init__()
         self.name = name
         self.images = images
+        self.images_a = images_a
         self.image = self.images[0]
+        self.image_a = self.images_a[0]
         self._count = 0
         self.rect = self.image.get_rect()
         self.cx = cx
         self.cy = cy
         self.rect.center = cx, cy
+        self.max_life = life
         self.life = life
-        self.life_display = Text(life, 'red', cx, cy + 80)
+        self.life_bar = HealthBar(cx, cy + 160, self.life, self.max_life)
         self.poison = 0
         self.level = None
         self.max_dices = dices
@@ -88,11 +108,10 @@ class Fighter(pygame.sprite.Sprite):
     def draw(self, surface, is_attacking):
         surface.blit(self.image, self.rect)
         if is_attacking:
-            self._attack(self.image)
+            self._attack(self.images_a)
         else:
             self._move(self.images)
-        self.life_display.text = str(self.life)
-        self.life_display.draw(surface)
+        self.life_bar.draw(surface, self.life)
 
     def _move(self, image_list):
         self.image = image_list[self._count // 20]
@@ -105,6 +124,7 @@ class Fighter(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.cx, self.cy
         self._count = (self._count + 1) % 40
+
 
 class Button(pygame.sprite.Sprite):
     def __init__(self, images, cx, cy, text):

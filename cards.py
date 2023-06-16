@@ -2,7 +2,7 @@ import pygame
 
 
 class DiceCard(pygame.sprite.Sprite):
-    def __init__(self, images, cx, cy, fighter):
+    def __init__(self, images, cx, cy, fighter, dmg, heal):
         super().__init__()
         self.images = images
         self.image = self.images[0]
@@ -13,11 +13,13 @@ class DiceCard(pygame.sprite.Sprite):
         self.active = True
         self.level = None
         self.fighter = fighter
+        self.dmg = dmg
+        self.heal = heal
 
     def action(self, target, damage, poison, heal):
-        target.life -= damage
+        target.life -= damage * self.dmg
         target.poison += poison
-        self.fighter.life += heal
+        self.fighter.life += heal * self.heal
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
