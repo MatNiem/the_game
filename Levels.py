@@ -32,12 +32,12 @@ class Level:
             self.next_level_button.activated = False
             return 'nt'
 
-    def draw(self, surface, enemy_attacking, player_attacking, is_player_turn):
+    def draw(self, surface, is_player_turn):
         surface.blit(self.background, (0, 0))
         self.next_level_button.draw(surface)
 
-        self.enemy.draw(surface, enemy_attacking)
-        self.player.draw(surface, player_attacking)
+        self.enemy.draw(surface)
+        self.player.draw(surface)
 
         if is_player_turn:
             self.set_of_cards.draw(surface)
@@ -65,7 +65,7 @@ class Menu:
             self.quit_button.activated = False
             return 'bq'
 
-    def draw(self, surface, a, b, c):
+    def draw(self, surface, a):
         surface.blit(self.background, (0, 0))
         self.start_button.draw(surface)
         self.quit_button.draw(surface)

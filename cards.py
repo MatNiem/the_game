@@ -2,7 +2,7 @@ import pygame
 
 
 class DiceCard(pygame.sprite.Sprite):
-    def __init__(self, images, cx, cy, fighter, dmg, heal):
+    def __init__(self, images, cx, cy, fighter, dmg, heal, roll=False, max_value=6):
         super().__init__()
         self.images = images
         self.image = self.images[0]
@@ -15,32 +15,18 @@ class DiceCard(pygame.sprite.Sprite):
         self.fighter = fighter
         self.dmg = dmg
         self.heal = heal
+        self.max_value = max_value
+        self.roll = roll
 
-    def action(self, target, damage, poison, heal):
-        target.life -= damage * self.dmg
-        target.poison += poison
-        self.fighter.life += heal * self.heal
+    def action(self, target, damage, heal):
+        if damage * self.dmg > 0:
+            self.fighter.action = 1
+            target.life -= damage * self.dmg
+        if heal * self.heal + self.fighter.life >= self.fighter.max_life:
+            self.fighter.life = self.fighter.max_life
+        else:
+            self.fighter.life += heal * self.heal
+        return self.roll
 
     def draw(self, surface):
         surface.blit(self.image, self.rect)
-
-
-# class OneDiceCard(DiceCard):
-#     def __init__(self, image, cx, cy, fighter):
-#         super().__init__(image, cx, cy, fighter)
-#
-#
-# class Attack(DiceCard):
-#     def __init__(self, image, cx, cy, fighter):
-#         super().__init__(image, cx, cy, fighter)
-#
-#     def action(self, target, damage):
-#         super().action(target, damage, 0, 0)
-#
-#
-# class CountingDiceCard(DiceCard):
-#     def __init__(self, image, cx, cy, fighter, count):
-#         super().__init__(image, cx, cy, fighter)
-#         self.starting_count = count
-#         self.count = self.starting_count
-

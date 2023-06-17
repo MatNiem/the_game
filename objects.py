@@ -75,22 +75,27 @@ class HealthBar:
         self.y = y
         self.hp = hp
         self.max_hp = max_hp
+        self.hp_text = Text(f'{self.hp} / {self.max_hp}', pygame.color.Color("RED"), self.x, self.y + 32)
 
     def draw(self, surface, hp):
+        self.hp_text = Text(f'{self.hp} / {self.max_hp}', pygame.color.Color("RED"), self.x, self.y + 32)
         self.hp = hp
         ratio = self.hp / self.max_hp
-        pygame.draw.rect(surface, red, (self.x - 75, self.y, 150, 20))
+        pygame.draw.rect(surface, red, (self.x - 76, self.y - 1, 152, 22))
         pygame.draw.rect(surface, green, (self.x - 75, self.y, 150 * ratio, 20))
+        self.hp_text.draw(surface)
 
 
 class Fighter(pygame.sprite.Sprite):
-    def __init__(self, name, images, images_a, cx, cy, life=12, dices=3):
+    def __init__(self, name, images, images_a, images_d, cx, cy, life=12, dices=3):
         super().__init__()
         self.name = name
         self.images = images
         self.images_a = images_a
+        self.images_d = images_d
         self.image = self.images[0]
         self.image_a = self.images_a[0]
+        self.image_d = self.images_d[0]
         self._count = 0
         self.rect = self.image.get_rect()
         self.cx = cx
@@ -98,32 +103,45 @@ class Fighter(pygame.sprite.Sprite):
         self.rect.center = cx, cy
         self.max_life = life
         self.life = life
-        self.life_bar = HealthBar(cx, cy + 160, self.life, self.max_life)
+        self.life_bar = HealthBar(cx, cy + 150, self.life, self.max_life)
         self.poison = 0
         self.level = None
         self.max_dices = dices
         self.dices = self.max_dices
         self.set_of_cards = pygame.sprite.Group()
+        self.action = 0
+        self.frame_countdown = 1
+        self.update_time = pygame.time.get_ticks()
+        self.frame_index = 0
 
-    def draw(self, surface, is_attacking):
+    def draw(self, surface):
         surface.blit(self.image, self.rect)
-        if is_attacking:
-            self._attack(self.images_a)
-        else:
-            self._move(self.images)
+        if self.action == 0:
+            self._idle(self.images)
+        elif self.action == 1:
+            self._action(self.images_a)
+        elif self.action == 2:
+            self._action(self.images_d)
         self.life_bar.draw(surface, self.life)
 
-    def _move(self, image_list):
-        self.image = image_list[self._count // 20]
-        self.rect = self.image.get_rect()
-        self.rect.center = self.cx, self.cy
-        self._count = (self._count + 1) % 40
+    def _idle(self, image_list):
+        animation_cooldown = 200
+        self.image = image_list[self.frame_index]
+        if pygame.time.get_ticks() - self.update_time > animation_cooldown:
+            self.update_time = pygame.time.get_ticks()
+            self.frame_index += 1
+        if self.frame_index >= len(image_list):
+            self.frame_index = 0
 
-    def _attack(self, image_list):
-        self.image = image_list[self._count // 20]
-        self.rect = self.image.get_rect()
-        self.rect.center = self.cx, self.cy
-        self._count = (self._count + 1) % 40
+    def _action(self, image_list):
+        animation_cooldown = 200
+        self.image = image_list[self.frame_index]
+        if pygame.time.get_ticks() - self.update_time > animation_cooldown:
+            self.update_time = pygame.time.get_ticks()
+            self.frame_index += 1
+        if self.frame_index >= len(image_list):
+            self.frame_index = 0
+            self.action = 0
 
 
 class Button(pygame.sprite.Sprite):
