@@ -288,6 +288,8 @@ while running:
     if option == 'b1':
         current_level, last_level = l_one, current_level
         if last_level == m_start:
+            # reset statistics
+            player.max_dices = 2
             current_level.player.dices = current_level.player.max_dices
             spawn_dices(current_level.player, dice_spawn_x)
             l_one.enemy.life = l_one.enemy.max_life
