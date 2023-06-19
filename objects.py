@@ -77,9 +77,10 @@ class HealthBar:
         self.max_hp = max_hp
         self.hp_text = Text(f'{self.hp} / {self.max_hp}', pygame.color.Color("RED"), self.x, self.y + 32)
 
-    def draw(self, surface, hp):
+    def draw(self, surface, hp, max_hp):
         self.hp_text = Text(f'{self.hp} / {self.max_hp}', pygame.color.Color("RED"), self.x, self.y + 32)
         self.hp = hp
+        self.max_hp = max_hp
         ratio = self.hp / self.max_hp
         pygame.draw.rect(surface, red, (self.x - 76, self.y - 1, 152, 22))
         pygame.draw.rect(surface, green, (self.x - 75, self.y, 150 * ratio, 20))
@@ -122,10 +123,10 @@ class Fighter(pygame.sprite.Sprite):
             self._action(self.images_a)
         elif self.action == 2:
             self._action(self.images_d)
-        self.life_bar.draw(surface, self.life)
+        self.life_bar.draw(surface, self.life, self.max_life)
 
     def _idle(self, image_list):
-        animation_cooldown = 200
+        animation_cooldown = 100
         self.image = image_list[self.frame_index]
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.update_time = pygame.time.get_ticks()
@@ -134,7 +135,7 @@ class Fighter(pygame.sprite.Sprite):
             self.frame_index = 0
 
     def _action(self, image_list):
-        animation_cooldown = 200
+        animation_cooldown = 100
         self.image = image_list[self.frame_index]
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.update_time = pygame.time.get_ticks()
@@ -154,7 +155,7 @@ class Button(pygame.sprite.Sprite):
         self.cy = cy
         self.rect.center = cx, cy
         self.text = text
-        self.generated_text = Text(text, pygame.color.Color("BLUE"), cx, cy)
+        self.generated_text = Text(text, pygame.color.Color("RED"), cx, cy)
         self.activated = False
 
     def button_action(self):

@@ -21,6 +21,7 @@ class DiceCard(pygame.sprite.Sprite):
     def action(self, target, damage, heal):
         if damage * self.dmg > 0:
             self.fighter.action = 1
+            self.fighter.frame_index = 0
             target.life -= damage * self.dmg
         if heal * self.heal + self.fighter.life >= self.fighter.max_life:
             self.fighter.life = self.fighter.max_life

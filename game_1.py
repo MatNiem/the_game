@@ -17,15 +17,21 @@ action_cooldown = 0
 
 CLICKED_DICES = 0
 
+dice_spawn_x = 400
+dice_spawn_y = HEIGHT + 70
+
 running = True
 
 path = 'images'
 # path = os.path.join(os.pardir, 'images')
 file_names = sorted(os.listdir(path))
-BACKGROUND_1 = pygame.image.load(os.path.join(path, 'background.png')).convert()
-BACKGROUND_MENU = pygame.image.load(os.path.join(path, 'backgroundx.jpg')).convert()
-BACKGROUND_2 = pygame.transform.scale_by(pygame.image.load(os.path.join(path, 'background2.jpg')).convert(), 2.5)
+BACKGROUND_MENU = pygame.transform.scale_by(pygame.image.load(os.path.join(path, 'background_m.png')).convert(), 0.8)
+BACKGROUND_2 = pygame.image.load(os.path.join(path, 'background.png')).convert()
+BACKGROUND_1 = pygame.transform.scale_by(pygame.image.load(os.path.join(path, 'background2.jpg')).convert(), 2.5)
 BACKGROUND_3 = pygame.transform.scale_by(pygame.image.load(os.path.join(path, 'background3.jpg')).convert(), 2.5)
+N_LEVEL_SCREEN = pygame.image.load(os.path.join(path, 'n_level.jpg')).convert()
+U_DIED_SCREEN = pygame.image.load(os.path.join(path, 'u_died.jpg')).convert()
+W_GAME_SCREEN = pygame.image.load(os.path.join(path, 'w_game.jpg')).convert()
 # file_names.remove('background.jpg')
 IMAGES = {}
 for file_name in file_names:
@@ -37,6 +43,7 @@ set_of_cards = pygame.sprite.Group()
 DICES = [IMAGES["DICE1"], IMAGES["DICE2"], IMAGES["DICE3"],
          IMAGES["DICE4"], IMAGES["DICE5"], IMAGES["DICE6"]]
 
+# player animations
 PLAYER_IDLE = [pygame.transform.scale_by(IMAGES["PLAYER1"], 5),
                pygame.transform.scale_by(IMAGES["PLAYER2"], 5),
                pygame.transform.scale_by(IMAGES["PLAYER3"], 5),
@@ -65,7 +72,7 @@ PLAYER_DEATH = [pygame.transform.scale_by(IMAGES["PLAYERD1"], 5),
                 pygame.transform.scale_by(IMAGES["PLAYERD8"], 5),
                 pygame.transform.scale_by(IMAGES["PLAYERD9"], 5),
                 pygame.transform.scale_by(IMAGES["PLAYERD10"], 5)]
-
+# enemy animations
 ENEMY_IDLE = [pygame.transform.scale_by(IMAGES["ENEMY1"], 5),
               pygame.transform.scale_by(IMAGES["ENEMY2"], 5),
               pygame.transform.scale_by(IMAGES["ENEMY3"], 5),
@@ -84,24 +91,6 @@ ENEMY_ATTACK = [pygame.transform.scale_by(IMAGES["ENEMYA1"], 5),
                 pygame.transform.scale_by(IMAGES["ENEMYA7"], 5),
                 pygame.transform.scale_by(IMAGES["ENEMYA8"], 5)]
 
-BOSS_IDLE = [pygame.transform.scale_by(IMAGES["HEAVYBANDIT_IDLE_0"], 5),
-             pygame.transform.scale_by(IMAGES["HEAVYBANDIT_IDLE_1"], 5),
-             pygame.transform.scale_by(IMAGES["HEAVYBANDIT_IDLE_2"], 5),
-             pygame.transform.scale_by(IMAGES["HEAVYBANDIT_IDLE_3"], 5),
-             pygame.transform.scale_by(IMAGES["HEAVYBANDIT_IDLE_0"], 5),
-             pygame.transform.scale_by(IMAGES["HEAVYBANDIT_IDLE_1"], 5),
-             pygame.transform.scale_by(IMAGES["HEAVYBANDIT_IDLE_2"], 5),
-             pygame.transform.scale_by(IMAGES["HEAVYBANDIT_IDLE_3"], 5)]
-
-BOSS_ATTACK = [pygame.transform.scale_by(IMAGES["HEAVYBANDIT_ATTACK_0"], 5),
-               pygame.transform.scale_by(IMAGES["HEAVYBANDIT_ATTACK_1"], 5),
-               pygame.transform.scale_by(IMAGES["HEAVYBANDIT_ATTACK_2"], 5),
-               pygame.transform.scale_by(IMAGES["HEAVYBANDIT_ATTACK_3"], 5),
-               pygame.transform.scale_by(IMAGES["HEAVYBANDIT_ATTACK_4"], 5),
-               pygame.transform.scale_by(IMAGES["HEAVYBANDIT_ATTACK_5"], 5),
-               pygame.transform.scale_by(IMAGES["HEAVYBANDIT_ATTACK_6"], 5),
-               pygame.transform.scale_by(IMAGES["HEAVYBANDIT_ATTACK_7"], 5)]
-
 ENEMY_DEATH = [pygame.transform.scale_by(IMAGES["ENEMYD1"], 5),
                pygame.transform.scale_by(IMAGES["ENEMYD2"], 5),
                pygame.transform.scale_by(IMAGES["ENEMYD3"], 5),
@@ -112,31 +101,46 @@ ENEMY_DEATH = [pygame.transform.scale_by(IMAGES["ENEMYD1"], 5),
                pygame.transform.scale_by(IMAGES["ENEMYD8"], 5),
                pygame.transform.scale_by(IMAGES["ENEMYD9"], 5),
                pygame.transform.scale_by(IMAGES["ENEMYD10"], 5)]
+# boss animations
+BOSS_IDLE = [pygame.transform.scale_by(IMAGES["BOSS1"], 5),
+             pygame.transform.scale_by(IMAGES["BOSS2"], 5),
+             pygame.transform.scale_by(IMAGES["BOSS3"], 5),
+             pygame.transform.scale_by(IMAGES["BOSS4"], 5), ]
 
-BOSS_DEATH = [pygame.transform.scale_by(IMAGES["HEAVYBANDIT_RECOVER_7"], 5),
-              pygame.transform.scale_by(IMAGES["HEAVYBANDIT_RECOVER_6"], 5),
-              pygame.transform.scale_by(IMAGES["HEAVYBANDIT_RECOVER_5"], 5),
-              pygame.transform.scale_by(IMAGES["HEAVYBANDIT_RECOVER_4"], 5),
-              pygame.transform.scale_by(IMAGES["HEAVYBANDIT_RECOVER_3"], 5),
-              pygame.transform.scale_by(IMAGES["HEAVYBANDIT_RECOVER_2"], 5),
-              pygame.transform.scale_by(IMAGES["HEAVYBANDIT_RECOVER_1"], 5),
-              pygame.transform.scale_by(IMAGES["HEAVYBANDIT_RECOVER_0"], 5),
-              pygame.transform.scale_by(IMAGES["HEAVYBANDIT_DEATH_0"], 5)]
+BOSS_ATTACK = [pygame.transform.scale_by(IMAGES["BOSSA1"], 5),
+               pygame.transform.scale_by(IMAGES["BOSSA2"], 5),
+               pygame.transform.scale_by(IMAGES["BOSSA3"], 5),
+               pygame.transform.scale_by(IMAGES["BOSSA4"], 5),
+               pygame.transform.scale_by(IMAGES["BOSSA5"], 5),
+               pygame.transform.scale_by(IMAGES["BOSSA6"], 5),
+               pygame.transform.scale_by(IMAGES["BOSSA7"], 5),
+               pygame.transform.scale_by(IMAGES["BOSSA8"], 5)]
 
+BOSS_DEATH = [pygame.transform.scale_by(IMAGES["BOSSD1"], 5),
+              pygame.transform.scale_by(IMAGES["BOSSD2"], 5),
+              pygame.transform.scale_by(IMAGES["BOSSD3"], 5),
+              pygame.transform.scale_by(IMAGES["BOSSD4"], 5),
+              pygame.transform.scale_by(IMAGES["BOSSD5"], 5),
+              pygame.transform.scale_by(IMAGES["BOSSD6"], 5),
+              pygame.transform.scale_by(IMAGES["BOSSD7"], 5),
+              pygame.transform.scale_by(IMAGES["BOSSD8"], 5),
+              pygame.transform.scale_by(IMAGES["BOSSD9"], 5)]
+
+# creating enemy objects
 enemy = objects.Fighter("E0", ENEMY_IDLE, ENEMY_ATTACK, ENEMY_DEATH, WIDTH - 200, HEIGHT - 200)
+enemy1 = objects.Fighter("E1", ENEMY_IDLE, ENEMY_ATTACK, ENEMY_DEATH, WIDTH - 200, HEIGHT - 200, dices=1)
+enemy2 = objects.Fighter("E2", ENEMY_IDLE, ENEMY_ATTACK, ENEMY_DEATH, WIDTH - 200, HEIGHT - 200, dices=2)
+enemy3 = objects.Fighter("E3", BOSS_IDLE, BOSS_ATTACK, BOSS_DEATH, WIDTH - 200, HEIGHT - 200, dices=3)
 
-enemy1 = objects.Fighter("E1", BOSS_IDLE, BOSS_ATTACK, BOSS_DEATH, WIDTH - 200, HEIGHT - 200, dices=1)
-enemy2 = objects.Fighter("E2", ENEMY_IDLE, ENEMY_ATTACK, ENEMY_DEATH, WIDTH - 200, HEIGHT - 200, dices=1)
-enemy3 = objects.Fighter("E3", ENEMY_IDLE, ENEMY_ATTACK, ENEMY_DEATH, WIDTH - 200, HEIGHT - 200, dices=1)
-
-player = objects.Fighter("Player", PLAYER_IDLE, PLAYER_ATTACK, PLAYER_DEATH, 200, HEIGHT - 200, life=12)
+# creating player object
+player = objects.Fighter("Player", PLAYER_IDLE, PLAYER_ATTACK, PLAYER_DEATH, 200, HEIGHT - 200, life=12, dices=2)
 
 # Menu start:
 m_start = Levels.Menu(BACKGROUND_MENU, IMAGES, "Start", player, enemy)
 # Menu pause:
 m_pause = Levels.Menu(BACKGROUND_MENU, IMAGES, "Continue", player, enemy)
 # Poziom pierwszy:
-l_one = Levels.Level("Level 1", player, enemy1, BACKGROUND_2, IMAGES)
+l_one = Levels.Level("Level 1", player, enemy1, BACKGROUND_1, IMAGES)
 # Poziom drugi:
 l_two = Levels.Level("Level 2", player, enemy2, BACKGROUND_2, IMAGES)
 # Poziom trzeci:
@@ -146,27 +150,27 @@ l_one.next_level = l_two
 l_two.next_level = l_three
 l_three.next_level = m_start
 
-dice_spawn_x = 400
-dice_spawn_y = HEIGHT + 70
-
 current_level = m_start
 last_level = l_one
-player.level = current_level
-enemy1.level = current_level
 
+# Card objects
 attack_card = cards.DiceCard([pygame.transform.scale_by(IMAGES["A1"], 0.35),
-                              pygame.transform.scale_by(IMAGES["A1_BW"], 0.35)], 250, 300, player, 1, 0, True)
+                              pygame.transform.scale_by(IMAGES["A1_BW"], 0.35)], 250, 300, player, 1, 0)
+attack_card2 = cards.DiceCard([pygame.transform.scale_by(IMAGES["A2"], 0.35),
+                               pygame.transform.scale_by(IMAGES["A2_BW"], 0.35)], 250, 300, player, 2, 0)
 heal_card = cards.DiceCard([IMAGES["KARTA2"], IMAGES["KARTA2GRAY"]], 550, 300, player, 0, 1, max_value=4)
+roll_card = cards.DiceCard([IMAGES["KARTA3"], IMAGES["KARTA3GRAY"]], 850, 300, player, 0, 0, True)
+
 player.set_of_cards.add(attack_card)
 player.set_of_cards.add(heal_card)
+player.set_of_cards.add(roll_card)
+
 attack_card.level = l_one
 heal_card.level = l_one
+roll_card.level = l_one
 
 is_player_turn = True
-bot_turn_passed = False
 dices_spawned = False
-damage_dealing = False
-enemy_attacking = False
 
 next_turn_screen = False
 
@@ -200,7 +204,7 @@ while running:
     current_level.draw(screen, is_player_turn)
 
     # turn handling
-    if not (current_level == m_pause and current_level == m_pause):
+    if not (current_level == m_pause or current_level == m_pause):
         # Player is dead:
         if player.life <= 0:
             current_level.player.action = 2
@@ -209,10 +213,11 @@ while running:
                 pass
             else:
                 pygame.time.wait(1000)
-                pygame.draw.rect(screen, (255, 0, 0), (0, 0, 1280, 720))
+                screen.blit(U_DIED_SCREEN, (0, 0))
                 pygame.display.flip()
-                pygame.time.wait(1000)
-                running = False
+                pygame.time.wait(2000)
+                current_level, last_level = m_start, current_level
+                player.life = 1
         # Enemy is dead:
         elif current_level.enemy.life <= 0:
             current_level.enemy.action = 2
@@ -220,10 +225,21 @@ while running:
                     and current_level.enemy.action == 2:
                 pass
             else:
-                pygame.draw.rect(screen, (0, 0, 0), (0, 0, 1280, 720))
+                if current_level != l_three:
+                    screen.blit(N_LEVEL_SCREEN, (0, 0))
+                else:
+                    screen.blit(W_GAME_SCREEN, (0, 0))
                 pygame.display.flip()
-                pygame.time.wait(1000)
+                pygame.time.wait(1500)
                 current_level, last_level = current_level.next_level, current_level
+                current_level.player.max_dices += 1
+                current_level.player.dices = current_level.player.max_dices
+                current_level.player.max_life += 6
+                current_level.player.life += 6
+                current_level.player.action = 0
+                if current_level == l_three:
+                    player.set_of_cards.remove(attack_card)
+                    player.set_of_cards.add(attack_card2)
                 is_player_turn = True
                 spawn_dices(player, dice_spawn_x)
                 for c in current_level.set_of_cards:
@@ -245,10 +261,8 @@ while running:
                             current_level.enemy.action = 1
                             d.kill()
                             action_cooldown = 0
-                            enemy_attacking = True
                             is_player_turn = True
                         dices_spawned = False
-                        enemy_attacking = False
                         action_cooldown = 0
             # Player's turn:
             if is_player_turn:
@@ -276,9 +290,18 @@ while running:
         if last_level == m_start:
             current_level.player.dices = current_level.player.max_dices
             spawn_dices(current_level.player, dice_spawn_x)
+            l_one.enemy.life = l_one.enemy.max_life
+            l_two.enemy.life = l_two.enemy.max_life
+            l_three.enemy.life = l_three.enemy.max_life
+            player.set_of_cards.empty()
+            player.set_of_cards.add(attack_card)
+            player.set_of_cards.add(heal_card)
+            player.set_of_cards.add(roll_card)
+            player.max_life = 12
+            player.life = player.max_life
     elif option == 'bq':
         running = False
-    elif option == 'nt':
+    elif option == 'nt' and is_player_turn:
         for dice in current_level.set_of_dices:
             dice.kill()
         for card in current_level.set_of_cards:

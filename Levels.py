@@ -1,4 +1,4 @@
-import pygame, os
+import pygame
 
 
 import objects
@@ -15,6 +15,7 @@ class Level:
         self.set_of_cards = player.set_of_cards
         self.next_level_button = objects.Button([images["BUTTON1"], images["BUTTON2"]], 1100, 60, "Next Turn")
         self.next_level = None
+
 
     def update(self):
         self.set_of_dices.update()
