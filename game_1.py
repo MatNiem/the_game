@@ -140,7 +140,7 @@ BOSS_DEATH = [pygame.transform.scale_by(IMAGES["BOSSD1"], 5),
 enemy = objects.Fighter("E0", ENEMY_IDLE, ENEMY_ATTACK, ENEMY_DEATH, WIDTH - 200, HEIGHT - 200)
 enemy1 = objects.Fighter("E1", ENEMY_IDLE, ENEMY_ATTACK, ENEMY_DEATH, WIDTH - 200, HEIGHT - 200, dices=1)
 enemy2 = objects.Fighter("E2", ENEMY_IDLE, ENEMY_ATTACK, ENEMY_DEATH, WIDTH - 200, HEIGHT - 200, dices=2)
-enemy3 = objects.Fighter("E3", BOSS_IDLE, BOSS_ATTACK, BOSS_DEATH, WIDTH - 200, HEIGHT - 200, dices=3)
+enemy3 = objects.Fighter("E3", BOSS_IDLE, BOSS_ATTACK, BOSS_DEATH, WIDTH - 200, HEIGHT - 200, life=36, dices=3)
 
 # creating player object
 player = objects.Fighter("Player", PLAYER_IDLE, PLAYER_ATTACK, PLAYER_DEATH, 200, HEIGHT - 200, life=12, dices=2)
@@ -174,8 +174,10 @@ attack_card = cards.DiceCard([pygame.transform.scale_by(IMAGES["A1"], 0.35),
                               pygame.transform.scale_by(IMAGES["A1_BW"], 0.35)], 250, 300, player, 1, 0)
 attack_card2 = cards.DiceCard([pygame.transform.scale_by(IMAGES["A2"], 0.35),
                                pygame.transform.scale_by(IMAGES["A2_BW"], 0.35)], 250, 300, player, 2, 0)
-heal_card = cards.DiceCard([IMAGES["KARTA2"], IMAGES["KARTA2GRAY"]], 550, 300, player, 0, 1, max_value=4)
-roll_card = cards.DiceCard([IMAGES["KARTA3"], IMAGES["KARTA3GRAY"]], 850, 300, player, 0, 0, True)
+heal_card = cards.DiceCard([pygame.transform.scale_by(IMAGES["B1"], 0.35),
+                            pygame.transform.scale_by(IMAGES["B1_BW"], 0.35)], 550, 300, player, 0, 1, max_value=4)
+roll_card = cards.DiceCard([pygame.transform.scale_by(IMAGES["C1"], 0.35),
+                            pygame.transform.scale_by(IMAGES["C1_BW"], 0.35)], 850, 300, player, 0, 0, True)
 
 # adding cards to player's set
 player.set_of_cards.add(attack_card)
