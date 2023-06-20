@@ -97,15 +97,11 @@ class Fighter(pygame.sprite.Sprite):
         self.image = self.images[0]
         self.image_a = self.images_a[0]
         self.image_d = self.images_d[0]
-        self._count = 0
         self.rect = self.image.get_rect()
-        self.cx = cx
-        self.cy = cy
         self.rect.center = cx, cy
         self.max_life = life
         self.life = life
         self.life_bar = HealthBar(cx, cy + 150, self.life, self.max_life)
-        self.poison = 0
         self.level = None
         self.max_dices = dices
         self.dices = self.max_dices
@@ -126,7 +122,7 @@ class Fighter(pygame.sprite.Sprite):
         self.life_bar.draw(surface, self.life, self.max_life)
 
     def _idle(self, image_list):
-        animation_cooldown = 100
+        animation_cooldown = 90
         self.image = image_list[self.frame_index]
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.update_time = pygame.time.get_ticks()
@@ -135,7 +131,7 @@ class Fighter(pygame.sprite.Sprite):
             self.frame_index = 0
 
     def _action(self, image_list):
-        animation_cooldown = 100
+        animation_cooldown = 90
         self.image = image_list[self.frame_index]
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.update_time = pygame.time.get_ticks()
