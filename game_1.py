@@ -17,6 +17,8 @@ action_cooldown = 0
 
 pygame.display.set_caption("Kościany loch")
 
+VOLUME = 0.10
+DIFFICULTY = 0.5
 CLICKED_DICES = 0
 
 dice_spawn_x = 400
@@ -39,10 +41,10 @@ for file_name in file_names:
     IMAGES[file_name[:-4].upper()] = pygame.image.load(os.path.join(path, file_name)).convert_alpha(BACKGROUND_1)
 
 # wczytywanie dźwięków
-sword_sound = pygame.mixer.Sound("sound\sword_swing.mp3")
-win_sound = pygame.mixer.Sound("sound\win.mp3")
+sword_sound = pygame.mixer.Sound("sound\\sword_swing.mp3")
+win_sound = pygame.mixer.Sound("sound\\win.mp3")
 next_level_sound = pygame.mixer.Sound("sound\\next_level.mp3")
-game_over_sound = pygame.mixer.Sound("sound\game_over.mp3")
+game_over_sound = pygame.mixer.Sound("sound\\game_over.mp3")
 
 set_of_dices = pygame.sprite.Group()
 set_of_cards = pygame.sprite.Group()
@@ -167,7 +169,7 @@ last_level = l_one
 # playing first music track
 pygame.mixer.music.load(current_level.music)
 pygame.mixer.music.play(-1)
-pygame.mixer.music.set_volume(0.2)
+pygame.mixer.music.set_volume(VOLUME)
 
 # Card objects
 attack_card = cards.DiceCard([pygame.transform.scale_by(IMAGES["A1"], 0.35),
@@ -194,8 +196,9 @@ def spawn_dices(unit, dice_x, to_the_right=True):
     global DICES, dice_spawn_y, current_level
     amount = unit.dices
     for i in range(amount):
-        d = objects.Dice(DICES, dice_x, dice_spawn_y, random.randint(0, 5))
-        current_level.set_of_dices.add(d)
+        # d = objects.Dice(DICES, dice_x, dice_spawn_y, random.randint(0, 5))
+        # current_level.set_of_dices.add(d)
+        current_level.set_of_dices.add(objects.Dice(DICES, dice_x, dice_spawn_y, random.randint(0, 5)))
         if to_the_right:
             dice_x += 100
         else:
@@ -282,7 +285,7 @@ while running:
                         action_cooldown = 0
                     else:
                         for d in current_level.set_of_dices:
-                            player.life -= d.value + 1
+                            player.life -= round(((d.value + 1) * DIFFICULTY))
                             current_level.enemy.action = 1
                             d.kill()
                             action_cooldown = 0
@@ -305,8 +308,9 @@ while running:
                                 and c.max_value > d.value:
                             result = c.action(current_level.enemy, d.value + 1, d.value + 1)
                             if result[0]:
-                                dices_spawned = False
+                                # dices_spawned = False
                                 current_level.player.dices += 1
+                                spawn_dices(player, dice_spawn_x + (player.max_dices * 100))
                             if result[1]:
                                 sword_sound.play()
                             d.kill()

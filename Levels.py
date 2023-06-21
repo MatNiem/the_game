@@ -62,4 +62,3 @@ class Menu:
         surface.blit(self.background, (0, 0))
         self.start_button.draw(surface)
         self.quit_button.draw(surface)
-
