@@ -13,7 +13,7 @@ class Level:
         self.set_of_cards = player.set_of_cards
         self.next_turn_button = objects.Button([images["BUTTON1"], images["BUTTON2"]], 1100, 60, "Next Turn")
         self.next_level = None
-        self.music = music
+        self.music = "music\\"+music
 
     def update(self):
         self.set_of_dices.update()
@@ -46,7 +46,7 @@ class Menu:
         self.set_of_dices = pygame.sprite.Group()
         self.player = player
         self.enemy = enemy
-        self.music = music
+        self.music = "music\\"+music
 
     def update(self):
         self.start_button.update()

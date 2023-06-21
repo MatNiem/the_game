@@ -151,7 +151,7 @@ class Button(pygame.sprite.Sprite):
         self.cy = cy
         self.rect.center = cx, cy
         self.text = text
-        self.generated_text = Text(text, pygame.color.Color("RED"), cx, cy)
+        self.generated_text = Text(text, pygame.color.Color("purple"), cx, cy, font_type='Impact')
         self.activated = False
 
     def button_action(self):

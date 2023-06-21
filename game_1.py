@@ -39,10 +39,10 @@ for file_name in file_names:
     IMAGES[file_name[:-4].upper()] = pygame.image.load(os.path.join(path, file_name)).convert_alpha(BACKGROUND_1)
 
 # wczytywanie dźwięków
-sword_sound = pygame.mixer.Sound("sword_swing.mp3")
-win_sound = pygame.mixer.Sound("win.mp3")
-next_level_sound = pygame.mixer.Sound("next_level.mp3")
-game_over_sound = pygame.mixer.Sound("game_over.mp3")
+sword_sound = pygame.mixer.Sound("sound\sword_swing.mp3")
+win_sound = pygame.mixer.Sound("sound\win.mp3")
+next_level_sound = pygame.mixer.Sound("sound\\next_level.mp3")
+game_over_sound = pygame.mixer.Sound("sound\game_over.mp3")
 
 set_of_dices = pygame.sprite.Group()
 set_of_cards = pygame.sprite.Group()
